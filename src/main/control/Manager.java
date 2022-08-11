@@ -4,6 +4,7 @@ import main.target.Epic;
 import main.target.Subtask;
 import main.target.Task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
@@ -83,13 +84,13 @@ public class Manager {
     }
 
     //Получение всех подзадач по name эпика
-    public void allSubtaskEpic(String name) {
-        System.out.println("Подзадачи эпика " + name + ":");
+    public ArrayList<Subtask> allSubtaskEpic(String name) {
         for (Epic specificEpic : allEpic.values()) {
             if (name.equals(specificEpic.getName())) {
-                System.out.println(specificEpic.getActions());
+                return (specificEpic.getActions());
             }
         }
+        return null;
     }
 
     //Добавление задачи в список
@@ -125,7 +126,6 @@ public class Manager {
     public void updateEpic(Epic epic) {
         allEpic.put(epic.getIndex(), epic);
     }
-
 
     public void deleteTask(int index) {
         allTask.remove(index);

@@ -19,6 +19,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Название подзадачи: " + getName() + ", идентификатор: " + getIndex() + ", статус: " + getStatus(); // просто возвращаем поля класса
+        return "Название подзадачи: " + getName() + ", идентификатор: " + getIndex() + ", статус: " + getStatus();
     }
 }

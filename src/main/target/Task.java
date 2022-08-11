@@ -1,10 +1,10 @@
 package main.target;
 
 public class Task {
-    private String name;
-    private String description;
-    private int index;
-    private String status;
+    protected String name;
+    protected String description;
+    protected int index;
+    protected String status;
 
     public Task(String name, String description, int index) {
         this.name = name;
