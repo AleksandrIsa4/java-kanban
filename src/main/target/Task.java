@@ -1,16 +1,17 @@
 package main.target;
 
 public class Task {
+
     protected String name;
     protected String description;
     protected int index;
-    protected String status;
+    protected Status status;
 
     public Task(String name, String description, int index) {
         this.name = name;
         this.description = description;
         this.index = index;
-        status = "NEW";
+        status = Status.NEW;
     }
 
     public String getName() {
@@ -37,11 +38,11 @@ public class Task {
         this.index = index;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
