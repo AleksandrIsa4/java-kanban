@@ -109,7 +109,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void creationTask(Task task) {
-        allTask.put((Integer) task.getIndex(), task);
+        allTask.put(task.getIndex(), task);
     }
 
     @Override

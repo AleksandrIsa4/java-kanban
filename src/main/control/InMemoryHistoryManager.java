@@ -1,12 +1,12 @@
 package main.control;
 
 import main.target.Task;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public class InMemoryHistoryManager implements HistoryManager {
+public final class InMemoryHistoryManager implements HistoryManager {
 
-    private List<Task> history = new ArrayList<>();
+    private LinkedList<Task> history = new LinkedList<>();
 
     public void add(Task task) {
         history.add(task);
