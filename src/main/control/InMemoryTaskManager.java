@@ -17,7 +17,6 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getIndexTask(int index) {
         for (Task indexTask : allTask.values()) {
             if (indexTask.getIndex() == index) {
-                //    recordHistory(indexTask);
                 historManager.add(indexTask);
                 return indexTask;
             }
@@ -29,7 +28,6 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask getIndexSubtask(int index) {
         for (Subtask indexTask : allSubtask.values()) {
             if (indexTask.getIndex() == index) {
-                //          recordHistory(indexTask);
                 historManager.add(indexTask);
                 return indexTask;
             }
@@ -42,7 +40,6 @@ public class InMemoryTaskManager implements TaskManager {
         for (Epic indexTask : allEpic.values()) {
             if (indexTask.getIndex() == index) {
                 historManager.add(indexTask);
-                //         recordHistory(indexTask);
                 return indexTask;
             }
         }
@@ -78,24 +75,24 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTask() {
-        allTask.clear();
+        for (Integer index : allTask.keySet()) {
+            deleteTask(index);
+        }
     }
 
     @Override
     public void deleteAllSubtask() {
-        allSubtask.clear();
-        for (Epic epic : allEpic.values()) {
-            epic.getActions().clear();
-            checkStatusEpic(epic);
+        for (Integer index : allSubtask.keySet()) {
+            deleteSubtask(index);
         }
     }
 
     @Override
     public void deleteAllEpic() {
-        allEpic.clear();
-        allSubtask.clear();
+        for (Integer index : allEpic.keySet()) {
+            deleteEpic(index);
+        }
     }
-
 
     @Override
     public ArrayList<Subtask> allSubtaskEpic(String name) {
@@ -143,20 +140,33 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask(int index) {
-        allTask.remove(index);
+        if (allTask.containsKey(index)) {
+            allTask.remove(index);
+            historManager.remove(index);
+        }
     }
 
     @Override
     public void deleteSubtask(int index) {
-        int indexEpic = allSubtask.get(index).getIndexEpic();
-        allEpic.get(indexEpic).getActions().remove(allSubtask.get(index));
-        allSubtask.remove(index);
-        checkStatusEpic(allEpic.get(indexEpic));
+        if (allSubtask.containsKey(index)) {
+            int indexEpic = allSubtask.get(index).getIndexEpic();
+            allEpic.get(indexEpic).getActions().remove(allSubtask.get(index));
+            allSubtask.remove(index);
+            checkStatusEpic(allEpic.get(indexEpic));
+            historManager.remove(index);
+        }
     }
 
     @Override
     public void deleteEpic(int index) {
-        allEpic.remove(index);
+        if (allEpic.containsKey(index)) {
+            for (Subtask subtask : allEpic.get(index).getActions()) {
+                allSubtask.remove(subtask.getIndex());
+                historManager.remove(subtask.getIndex());
+            }
+            allEpic.remove(index);
+            historManager.remove(index);
+        }
     }
 
     @Override
@@ -185,11 +195,9 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setStatus(Status.NEW);
         if (!epic.getActions().isEmpty()) {
             for (Subtask subtask : epic.getActions()) {
-                //  if (!subtask.getStatus().equals("DONE")) {
                 if (subtask.getStatus() != Status.DONE) {
                     positionDone = false;
                 }
-                //     if (!subtask.getStatus().equals("NEW")) {
                 if (subtask.getStatus() != Status.NEW) {
                     positionNEW = false;
                 }

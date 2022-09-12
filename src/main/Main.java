@@ -23,9 +23,18 @@ public class Main {
         index++;
         inMemoryTaskManager.creationSubtask(new Subtask("Выбрать чай", "Добавить заварку", index, indexEpic));
         index++;
+        inMemoryTaskManager.creationSubtask(new Subtask("Достать посуду", "Помыть чашку", index, indexEpic));
+        index++;
         indexEpic = index;
         inMemoryTaskManager.creationEpic(new Epic("Зарядить телефон", index));
         index++;
         inMemoryTaskManager.creationSubtask(new Subtask("Поставить телефон на зарядку", "Подключить телефон к зарядке", index, indexEpic));
+        index++;
+        inMemoryTaskManager.creationSubtask(new Subtask("Достать зарядник", "Найти блок питания", index, indexEpic));
+        index++;
+        inMemoryTaskManager.creationSubtask(new Subtask("Освободить розетку", "Вытащить не нужный кабель", index, indexEpic));
+        index++;
+        indexEpic = index;
+        inMemoryTaskManager.creationEpic(new Epic("Выгулять собаку", index));
     }
 }
