@@ -1,11 +1,11 @@
 package main.control;
 
 import main.target.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-
     String getAllTask();
 
     String getAllSubtask();

@@ -1,7 +1,6 @@
 package main.control;
 
 public class Managers {
-
     public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
@@ -9,6 +8,4 @@ public class Managers {
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
-
-    ;
 }

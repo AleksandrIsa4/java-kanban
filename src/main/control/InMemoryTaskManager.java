@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-
     private HashMap<Integer, Task> allTask = new HashMap<>();
     private HashMap<Integer, Subtask> allSubtask = new HashMap<>();
     private HashMap<Integer, Epic> allEpic = new HashMap<>();
@@ -76,22 +75,32 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllTask() {
         for (Integer index : allTask.keySet()) {
-            deleteTask(index);
+            historManager.remove(index);
         }
+        allTask.clear();
     }
 
     @Override
     public void deleteAllSubtask() {
         for (Integer index : allSubtask.keySet()) {
-            deleteSubtask(index);
+            int indexEpic = allSubtask.get(index).getIndexEpic();
+            allEpic.get(indexEpic).getActions().remove(allSubtask.get(index));
+            checkStatusEpic(allEpic.get(indexEpic));
+            historManager.remove(index);
         }
+        allSubtask.clear();
     }
 
     @Override
     public void deleteAllEpic() {
         for (Integer index : allEpic.keySet()) {
-            deleteEpic(index);
+            for (Subtask subtask : allEpic.get(index).getActions()) {
+                historManager.remove(subtask.getIndex());
+            }
+            historManager.remove(index);
         }
+        allSubtask.clear();
+        allEpic.clear();
     }
 
     @Override

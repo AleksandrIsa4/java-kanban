@@ -8,9 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class InMemoryHistoryManager implements HistoryManager {
-
     private CustomLinkedList<Task> history = new CustomLinkedList<>();
-    private Map<Integer, Node> historyHash = new HashMap<>();
+    private Map<Integer, CustomLinkedList.Node> historyHash = new HashMap<>();
     private List<Task> historyList = new ArrayList<>();
 
     public void add(Task task) {
@@ -36,6 +35,28 @@ public final class InMemoryHistoryManager implements HistoryManager {
     }
 
     private class CustomLinkedList<T> {
+
+        class Node<E> {
+            public E task;
+            public Node<E> next;
+            public Node<E> prev;
+
+            public Node(Node<E> prev, E task, Node<E> next) {
+                this.task = task;
+                this.next = next;
+                this.prev = prev;
+            }
+
+            @Override
+            public String toString() {
+                return "Node{" +
+                        "task=" + task +
+                        ", next=" + (next != null ? next.task : null) +
+                        ", prev=" + (prev != null ? prev.task : null) +
+                        '}';
+            }
+        }
+
         private Node<T> head;
         private Node<T> tail;
         private int size = 0;
@@ -58,16 +79,24 @@ public final class InMemoryHistoryManager implements HistoryManager {
 
         private void removeNode(Node node) {
             Node ptr = head;
+
             if (ptr == node) {
+                if (size == 1) {
+                    node.task = null;
+                    size--;
+                    return;
+                }
                 head = node.next;
                 head.prev = null;
                 node.task = null;
+                size--;
                 return;
             }
             if (tail == node) {
                 tail = node.prev;
                 tail.next = null;
                 node.task = null;
+                size--;
                 return;
             }
             while (ptr != null) {

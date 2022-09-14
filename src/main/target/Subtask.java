@@ -1,7 +1,6 @@
 package main.target;
 
 public class Subtask extends Task {
-
     private int indexEpic;
 
     public Subtask(String name, String description, int index, int indexEpic) {
