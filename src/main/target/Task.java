@@ -47,6 +47,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Название задачи: " + name + ", идентификатор: " + index + ", статус: " + status;
+        return index + "," + name + "," + status + "," + description;
     }
 }

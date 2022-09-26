@@ -7,7 +7,7 @@ public class Epic extends Task {
 
     public Epic(String name, int index) {
 
-        super(name, "", index);
+        super(name, " ", index);
     }
 
     public ArrayList<Subtask> getActions() {
@@ -20,6 +20,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Название эпика: " + getName() + ", идентификатор: " + getIndex() + ", статус: " + getStatus();
+        return index + "," + name + "," + status;
     }
 }

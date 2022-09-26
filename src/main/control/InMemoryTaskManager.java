@@ -2,15 +2,24 @@ package main.control;
 
 import main.target.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private HashMap<Integer, Task> allTask = new HashMap<>();
-    private HashMap<Integer, Subtask> allSubtask = new HashMap<>();
-    private HashMap<Integer, Epic> allEpic = new HashMap<>();
-    private HistoryManager historManager = Managers.getDefaultHistory();
+    protected static Map<Integer, Task> allTask;
+    protected static Map<Integer, Subtask> allSubtask;
+    protected static Map<Integer, Epic> allEpic;
+    protected static HistoryManager historManager;
+
+    public InMemoryTaskManager() {
+        allTask = new HashMap<>();
+        allSubtask = new HashMap<>();
+        allEpic = new HashMap<>();
+        historManager = Managers.getDefaultHistory();
+    }
 
     @Override
     public Task getIndexTask(int index) {
@@ -49,6 +58,7 @@ public class InMemoryTaskManager implements TaskManager {
     public String getAllTask() {
         String print = "Список всех задач \n";
         for (Task task : allTask.values()) {
+
             print += task + "\n";
         }
         return print;
@@ -227,4 +237,15 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getHistory() {
         return historManager.getHistory();
     }
+
+    @Override
+    public void save() {
+        System.out.println("Нет такого метода в InMemoryTaskManager");
+    }
+
+    @Override
+    public void loadFromFile(String file) {
+        System.out.println("Нет такого метода в InMemoryTaskManager");
+    }
+
 }

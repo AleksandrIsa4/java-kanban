@@ -18,6 +18,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Название подзадачи: " + getName() + ", идентификатор: " + getIndex() + ", статус: " + getStatus();
+        return index + "," + name + "," + status + "," + description + "," + indexEpic;
     }
 }

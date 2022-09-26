@@ -2,6 +2,7 @@ package main.control;
 
 import main.target.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,4 +68,10 @@ public interface TaskManager {
 
     //история просмотров задач
     List<Task> getHistory();
+
+    //сохранение в файл задач и истории
+    void save();
+
+    //извлечение задач и истории из файла
+    void loadFromFile(String file);
 }
