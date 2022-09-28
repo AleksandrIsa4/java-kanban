@@ -2,9 +2,7 @@ package main.control;
 
 import main.target.*;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -39,26 +37,34 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private static String historyToString(HistoryManager manager) {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (Task history : manager.getHistory()) {
-            str += history.getIndex() + ",";
+            str.append(history.getIndex() + ",");
         }
-        return str;
+        return str.toString();
     }
 
     public void fromString(String value) {
         String[] task = value.split(",");
-        switch (Type.valueOf(task[1])) {
+        int index = Integer.parseInt(task[0]);
+        Type type = Type.valueOf(task[1]);
+        String nameTask = task[2];
+        Status statusTask = Status.valueOf(task[3]);
+        String descriptionTask;
+        switch (type) {
             case TASK:
-                super.creationTask(new Task(task[2], task[4], Integer.parseInt(task[0])));
-                assignTask(task[2], Status.valueOf(task[3]));
+                descriptionTask = task[4];
+                super.creationTask(new Task(nameTask, descriptionTask, index));
+                assignTask(nameTask, statusTask);
                 break;
             case EPIC:
-                super.creationEpic(new Epic(task[2], Integer.parseInt(task[0])));
+                super.creationEpic(new Epic(nameTask, index));
                 break;
             case SUBTASK:
-                super.creationSubtask(new Subtask(task[2], task[4], Integer.parseInt(task[0]), Integer.parseInt(task[5])));
-                assignSubtask(task[2], Status.valueOf(task[3]));
+                descriptionTask = task[4];
+                int indexEpic = Integer.parseInt(task[5]);
+                super.creationSubtask(new Subtask(nameTask, descriptionTask, index, indexEpic));
+                assignSubtask(nameTask, statusTask);
                 break;
             default:
                 break;
@@ -66,7 +72,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void loadFromFile(String file) {
+    public void loadFile(String file) {
         try {
             Path filePath = Path.of(file);
             String content = Files.readString(filePath);

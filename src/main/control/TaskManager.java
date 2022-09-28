@@ -33,7 +33,6 @@ public interface TaskManager {
     ArrayList<Subtask> allSubtaskEpic(String name);
 
     //Добавление задачи в список
-    // void creationTask(Task task);
     void creationTask(Task task);
 
     //Добавление подзадачи в список
@@ -73,5 +72,5 @@ public interface TaskManager {
     void save();
 
     //извлечение задач и истории из файла
-    void loadFromFile(String file);
+    void loadFile(String file);
 }

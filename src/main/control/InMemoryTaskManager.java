@@ -244,8 +244,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void loadFromFile(String file) {
+    public void loadFile(String file) {
         System.out.println("Нет такого метода в InMemoryTaskManager");
     }
-
 }
