@@ -5,6 +5,7 @@ import main.target.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
     String getAllTask();
@@ -62,9 +63,6 @@ public interface TaskManager {
     //передача нового состояния подзадачи
     void assignSubtask(String name, Status status);
 
-    //обновление статуса эпика
-    void checkStatusEpic(Epic epic);
-
     //история просмотров задач
     List<Task> getHistory();
 
@@ -73,4 +71,6 @@ public interface TaskManager {
 
     //извлечение задач и истории из файла
     void loadFile(String file);
+
+    Set<Task> getPrioritizedTasks();
 }

@@ -5,6 +5,8 @@ import main.target.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -15,15 +17,28 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         str.append("id,type,name,status,description,epic");
         for (Map.Entry<Integer, Task> entry : allTask.entrySet()) {
             str.append("\n" + String.valueOf(entry.getKey()));
-            str.append("," + Type.TASK + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDescription() + ",");
+            if (entry.getValue().getStartTime() != null) {
+                str.append("," + Type.TASK + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDescription() + "," + entry.getValue().getDuration() + "," + entry.getValue().getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")) + ",");
+            } else {
+                str.append("," + Type.TASK + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDescription() + "," + entry.getValue().getDuration() + ",");
+            }
         }
         for (Map.Entry<Integer, Epic> entry : allEpic.entrySet()) {
             str.append("\n" + String.valueOf(entry.getKey()));
-            str.append("," + Type.EPIC + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + ",");
+            if (entry.getValue().getStartTime() != null) {
+                str.append("," + Type.EPIC + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDuration() + "," + entry.getValue().getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")) + ",");
+
+            } else {
+                str.append("," + Type.EPIC + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDuration() + ",");
+            }
         }
         for (Map.Entry<Integer, Subtask> entry : allSubtask.entrySet()) {
             str.append("\n" + String.valueOf(entry.getKey()));
-            str.append("," + Type.SUBTASK + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDescription() + "," + entry.getValue().getIndexEpic() + ",");
+            if (entry.getValue().getStartTime() != null) {
+                str.append("," + Type.SUBTASK + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDescription() + "," + entry.getValue().getIndexEpic() + "," + entry.getValue().getDuration() + "," + entry.getValue().getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")) + ",");
+            } else {
+                str.append("," + Type.SUBTASK + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDescription() + "," + entry.getValue().getIndexEpic() + "," + entry.getValue().getDuration() + ",");
+            }
         }
         str.deleteCharAt(str.length() - 1);
         str.append("\n\n");
@@ -39,7 +54,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static String historyToString(HistoryManager manager) {
         StringBuilder str = new StringBuilder();
         for (Task history : manager.getHistory()) {
-            str.append(history.getIndex() + ",");
+            try {
+                str.append(history.getIndex() + ",");
+            } catch (NullPointerException e) {
+                str.append(",");
+            }
         }
         return str.toString();
     }
@@ -51,21 +70,39 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String nameTask = task[2];
         Status statusTask = Status.valueOf(task[3]);
         String descriptionTask;
+        int duration;
+        String startTime;
         switch (type) {
             case TASK:
                 descriptionTask = task[4];
-                super.creationTask(new Task(nameTask, descriptionTask, index));
-                assignTask(nameTask, statusTask);
-                break;
+                duration = Duration.parse(task[5]).toMinutesPart();
+                try {
+                    startTime = task[6];
+                    super.creationTask(new Task(nameTask, descriptionTask, index, duration, startTime));
+                    assignTask(nameTask, statusTask);
+                    break;
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    super.creationTask(new Task(nameTask, descriptionTask, index, duration));
+                    assignTask(nameTask, statusTask);
+                    break;
+                }
             case EPIC:
                 super.creationEpic(new Epic(nameTask, index));
                 break;
             case SUBTASK:
                 descriptionTask = task[4];
                 int indexEpic = Integer.parseInt(task[5]);
-                super.creationSubtask(new Subtask(nameTask, descriptionTask, index, indexEpic));
-                assignSubtask(nameTask, statusTask);
-                break;
+                duration = Duration.parse(task[6]).toMinutesPart();
+                try {
+                    startTime = task[7];
+                    super.creationSubtask(new Subtask(nameTask, descriptionTask, index, indexEpic, duration, startTime));
+                    assignSubtask(nameTask, statusTask);
+                    break;
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    super.creationSubtask(new Subtask(nameTask, descriptionTask, index, indexEpic, duration));
+                    assignSubtask(nameTask, statusTask);
+                    break;
+                }
             default:
                 break;
         }
@@ -87,6 +124,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
         } catch (IOException e) {
             System.out.println("Невозможно считать файл");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Неправильный формат файла");
         }
     }
 
