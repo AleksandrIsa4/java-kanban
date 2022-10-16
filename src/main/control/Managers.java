@@ -1,5 +1,8 @@
 package main.control;
 
+import main.control.InterfaceManager.HistoryManager;
+import main.control.InterfaceManager.TaskManager;
+
 import java.io.File;
 
 public class Managers {

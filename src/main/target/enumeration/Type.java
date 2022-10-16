@@ -1,4 +1,4 @@
-package main.target;
+package main.target.enumeration;
 
 public enum Type {
     TASK,

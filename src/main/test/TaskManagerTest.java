@@ -1,8 +1,8 @@
 package main.test;
 
-import main.control.TaskManager;
+import main.control.InterfaceManager.TaskManager;
 import main.target.Epic;
-import main.target.Status;
+import main.target.enumeration.Status;
 import main.target.Subtask;
 import main.target.Task;
 import org.junit.jupiter.api.Assertions;
@@ -52,10 +52,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getIndexEpicTest() {
-        Epic epic = taskManager.getIndexEpic(3);
+        Epic epic = taskManager.getIndexEpic(7);
         Epic epic2 = taskManager.getIndexEpic(10);
         Assertions.assertAll(
-                () -> Assertions.assertEquals(epic, new Epic("Приготовить чай", 3)),
+                () -> Assertions.assertEquals(epic, new Epic("Зарядить телефон", 7)),
                 () -> Assertions.assertNull(epic2, "Задачи нe должна вернуться."),
                 () -> Assertions.assertNotNull(epic, "Задача не возвращаются.")
         );
@@ -122,10 +122,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void creationTaskTest() {
         Task task = taskManager.getIndexTask(1);
-        taskManager.creationTask(new Task("Поездка", "Упаковать кошку", 3, 55, "22.10.22 10:55"));
+        taskManager.creationTask(new Task("Поездка", "Упаковать кошку", 33, 55, "22.10.22 10:55"));
         Assertions.assertAll(
                 () -> Assertions.assertEquals(task, new Task("Поездка", "Упаковать кошку", 1, 55, "22.10.22 10:45")),
-                () -> Assertions.assertNull(taskManager.getIndexTask(3), "Задачи нe должна вернуться."),
+                () -> Assertions.assertNull(taskManager.getIndexTask(33), "Задачи нe должна вернуться."),
                 () -> Assertions.assertNotNull(task, "Задача не возвращаются.")
         );
     }
@@ -142,9 +142,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void creationEpicTest() {
-        Epic epic = taskManager.getIndexEpic(3);
+        Epic epic = taskManager.getIndexEpic(7);
         Assertions.assertAll(
-                () -> Assertions.assertEquals(epic, new Epic("Приготовить чай", 3)),
+                () -> Assertions.assertEquals(epic, new Epic("Зарядить телефон", 7)),
                 () -> Assertions.assertNotNull(epic, "Задача не возвращаются.")
         );
     }
@@ -172,9 +172,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void updateEpicTest() {
-        Epic epic = taskManager.getIndexEpic(3);
+        Epic epic = taskManager.getIndexEpic(7);
         Assertions.assertAll(
-                () -> Assertions.assertEquals(epic, new Epic("Приготовить чай", 3)),
+                () -> Assertions.assertEquals(epic, new Epic("Зарядить телефон", 7)),
                 () -> Assertions.assertNotNull(epic, "Задача не возвращаются.")
         );
     }

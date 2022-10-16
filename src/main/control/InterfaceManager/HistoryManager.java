@@ -1,4 +1,4 @@
-package main.control;
+package main.control.InterfaceManager;
 
 import main.target.Task;
 

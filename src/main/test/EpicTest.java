@@ -3,9 +3,9 @@ package main.test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import main.control.InMemoryTaskManager;
-import main.control.TaskManager;
+import main.control.InterfaceManager.TaskManager;
 import main.target.Epic;
-import main.target.Status;
+import main.target.enumeration.Status;
 import main.target.Subtask;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

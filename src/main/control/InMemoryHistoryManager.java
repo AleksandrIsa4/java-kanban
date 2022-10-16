@@ -1,5 +1,6 @@
 package main.control;
 
+import main.control.InterfaceManager.HistoryManager;
 import main.target.Task;
 
 import java.util.ArrayList;

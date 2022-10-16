@@ -30,24 +30,12 @@ public class Epic extends Task {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
         Epic epic = (Epic) o;
-        return Objects.equals(index, epic.index) &&
-                Objects.equals(name, epic.name) &&
-                Objects.equals(status, epic.status);
+        return super.equals(epic);
     }
 
     @Override
     public int hashCode() {
-        int hash = 17;
-        if (name != null) {
-            hash = hash + name.hashCode();
-        }
-        hash = hash * 31 * index;
-        if (status != null) {
-            hash = hash + status.hashCode();
-        }
-        return hash;
+        return super.hashCode();
     }
 }

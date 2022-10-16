@@ -1,6 +1,9 @@
 package main.control;
 
+import main.control.InterfaceManager.HistoryManager;
 import main.target.*;
+import main.target.enumeration.Status;
+import main.target.enumeration.Type;
 
 import java.io.*;
 import java.nio.file.Files;

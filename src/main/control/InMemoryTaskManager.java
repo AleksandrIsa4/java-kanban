@@ -1,30 +1,20 @@
 package main.control;
 
+import main.control.InterfaceManager.HistoryManager;
+import main.control.InterfaceManager.TaskManager;
 import main.target.*;
+import main.target.enumeration.Status;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class InMemoryTaskManager implements TaskManager {
+public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
     protected static Map<Integer, Task> allTask;
     protected static Map<Integer, Subtask> allSubtask;
     protected static Map<Integer, Epic> allEpic;
     protected static HistoryManager historManager;
-    Comparator<Task> comparator = new Comparator<>() {
-        @Override
-        public int compare(Task t1, Task t2) throws NullPointerException {
-            if (t2.getStartTime() != null) {
-                try {
-                    return t1.getStartTime().compareTo(t2.getStartTime());
-                } catch (NullPointerException e) {
-                    return 1;
-                }
-            } else {
-                return -1;
-            }
-        }
-    };
+
     Set<Task> treeTask;
 
     public InMemoryTaskManager() {
@@ -32,7 +22,21 @@ public class InMemoryTaskManager implements TaskManager {
         allSubtask = new HashMap<>();
         allEpic = new HashMap<>();
         historManager = Managers.getDefaultHistory();
-        treeTask = new TreeSet<>(comparator);
+        treeTask = new TreeSet<>(this);
+    }
+
+    @Override
+    public int compare(Task t1, Task t2) throws NullPointerException {
+        if (t2.getStartTime() != null) {
+            try {
+                return t1.getStartTime().compareTo(t2.getStartTime());
+            } catch (NullPointerException e) {
+                // В случае, если только одна задача занесена с датой начала и сравнивается с задачей без даты начала. Задача добавится в конец списка.
+                return 1;
+            }
+        } else {
+            return -1;
+        }
     }
 
     @Override

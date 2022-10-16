@@ -35,26 +35,15 @@ public class Subtask extends Task {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
         Subtask subtask = (Subtask) o;
-        return Objects.equals(index, subtask.index) &&
-                Objects.equals(name, subtask.name) &&
-                Objects.equals(description, subtask.description) &&
+        return super.equals(subtask) &&
                 Objects.equals(indexEpic, subtask.indexEpic);
     }
 
     @Override
     public int hashCode() {
-        int hash = 17;
-        if (name != null) {
-            hash = hash + name.hashCode();
-        }
-        hash = hash * 31 * index * indexEpic;
-
-        if (description != null) {
-            hash = hash + description.hashCode();
-        }
+        int hash = super.hashCode();
+        hash = hash * 2 * indexEpic;
         return hash;
     }
 }

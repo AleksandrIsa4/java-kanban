@@ -1,5 +1,7 @@
 package main.target;
 
+import main.target.enumeration.Status;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -104,22 +106,40 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(index, task.index) &&
-                Objects.equals(name, task.name) &&
-                Objects.equals(description, task.description) &&
-                Objects.equals(status, task.status);
+        if (startTime != null) {
+            return Objects.equals(index, task.index) &&
+                    Objects.equals(name, task.name) &&
+                    Objects.equals(description, task.description) &&
+                    Objects.equals(status, task.status) &&
+                    Objects.equals(duration, task.duration) &&
+                    Objects.equals(startTime, task.startTime);
+        } else {
+            return Objects.equals(index, task.index) &&
+                    Objects.equals(name, task.name) &&
+                    Objects.equals(description, task.description) &&
+                    Objects.equals(status, task.status) &&
+                    Objects.equals(duration, task.duration);
+        }
     }
 
     @Override
     public int hashCode() {
         int hash = 17;
+        hash = hash * 31 * index;
         if (name != null) {
             hash = hash + name.hashCode();
         }
-        hash = hash * 31 * index;
-
         if (description != null) {
             hash = hash + description.hashCode();
+        }
+        if (status != null) {
+            hash = hash + status.hashCode();
+        }
+        if (duration != null) {
+            hash = hash + duration.hashCode();
+        }
+        if (startTime != null) {
+            hash = hash + startTime.hashCode();
         }
         return hash;
     }
