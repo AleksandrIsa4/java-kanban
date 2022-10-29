@@ -6,13 +6,13 @@ import java.util.Objects;
 public class Subtask extends Task {
     private int indexEpic;
 
-    public Subtask(String name, String description, int index, int indexEpic, int durationInt, String startTimeString) {
-        super(name, description, index, durationInt, startTimeString);
+    public Subtask(String name, String description, int indexEpic, int durationInt, String startTimeString) {
+        super(name, description, durationInt, startTimeString);
         this.indexEpic = indexEpic;
     }
 
-    public Subtask(String name, String description, int index, int indexEpic, int durationInt) {
-        super(name, description, index, durationInt);
+    public Subtask(String name, String description, int indexEpic, int durationInt) {
+        super(name, description, durationInt);
         this.indexEpic = indexEpic;
     }
 
@@ -27,9 +27,9 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         if (startTime != null) {
-            return index + "," + name + "," + status + "," + description + "," + indexEpic + "," + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm"));
+            return index + ", " + name + ", " + status + ", " + description + ", " + indexEpic + ", " + getDuration() + ", " + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm"));
         } else {
-            return index + "," + name + "," + status + "," + description + "," + indexEpic;
+            return index + ", " + name + ", " + status + ", " + description + ", " + indexEpic + ", " + getDuration();
         }
     }
 

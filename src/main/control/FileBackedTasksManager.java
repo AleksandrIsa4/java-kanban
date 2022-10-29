@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    @Override
-    public void save() {
+    //передача и сохранение всех задач и истории в формате индекса в виде списка на сервер
+    protected void save() {
         StringBuilder str = new StringBuilder();
         str.append("id,type,name,status,description,epic");
         for (Map.Entry<Integer, Task> entry : allTask.entrySet()) {
@@ -32,7 +32,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 str.append("," + Type.EPIC + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDuration() + "," + entry.getValue().getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm")) + ",");
 
             } else {
-                str.append("," + Type.EPIC + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDuration() + ",");
+                str.append("," + Type.EPIC + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + ",");
+                //str.append("," + Type.EPIC + "," + entry.getValue().getName() + "," + entry.getValue().getStatus() + "," + entry.getValue().getDuration() + ",");
             }
         }
         for (Map.Entry<Integer, Subtask> entry : allSubtask.entrySet()) {
@@ -81,16 +82,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 duration = Duration.parse(task[5]).toMinutesPart();
                 try {
                     startTime = task[6];
-                    super.creationTask(new Task(nameTask, descriptionTask, index, duration, startTime));
+                    Task taskFile = new Task(nameTask, descriptionTask, duration, startTime);
+                    taskFile.setIndex(index);
+                    super.creationTask(taskFile);
                     assignTask(nameTask, statusTask);
                     break;
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    super.creationTask(new Task(nameTask, descriptionTask, index, duration));
+                    Task taskFile = new Task(nameTask, descriptionTask, duration);
+                    taskFile.setIndex(index);
+                    super.creationTask(taskFile);
                     assignTask(nameTask, statusTask);
                     break;
                 }
             case EPIC:
-                super.creationEpic(new Epic(nameTask, index));
+                Epic epicFile = new Epic(nameTask);
+                epicFile.setIndex(index);
+                super.creationEpic(epicFile);
                 break;
             case SUBTASK:
                 descriptionTask = task[4];
@@ -98,11 +105,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 duration = Duration.parse(task[6]).toMinutesPart();
                 try {
                     startTime = task[7];
-                    super.creationSubtask(new Subtask(nameTask, descriptionTask, index, indexEpic, duration, startTime));
+                    Subtask subtaskFile = new Subtask(nameTask, descriptionTask, indexEpic, duration, startTime);
+                    subtaskFile.setIndex(index);
+                    super.creationSubtask(subtaskFile);
                     assignSubtask(nameTask, statusTask);
                     break;
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    super.creationSubtask(new Subtask(nameTask, descriptionTask, index, indexEpic, duration));
+                    Subtask subtaskFile = new Subtask(nameTask, descriptionTask, indexEpic, duration);
+                    subtaskFile.setIndex(index);
+                    super.creationSubtask(subtaskFile);
                     assignSubtask(nameTask, statusTask);
                     break;
                 }
@@ -111,6 +122,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
+    // Загрузка задач и истории из файла
     @Override
     public void loadFile(String file) {
         try {

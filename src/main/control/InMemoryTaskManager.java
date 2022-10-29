@@ -2,6 +2,7 @@ package main.control;
 
 import main.control.InterfaceManager.HistoryManager;
 import main.control.InterfaceManager.TaskManager;
+import main.control.manager.Managers;
 import main.target.*;
 import main.target.enumeration.Status;
 
@@ -14,6 +15,7 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
     protected static Map<Integer, Subtask> allSubtask;
     protected static Map<Integer, Epic> allEpic;
     protected static HistoryManager historManager;
+    private int generator = 0;
 
     Set<Task> treeTask;
 
@@ -135,9 +137,9 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
     }
 
     @Override
-    public ArrayList<Subtask> allSubtaskEpic(String name) {
+    public ArrayList<Subtask> allSubtaskEpic(int index) {
         for (Epic specificEpic : allEpic.values()) {
-            if (name.equals(specificEpic.getName())) {
+            if (index == specificEpic.getIndex()) {
                 return (specificEpic.getActions());
             }
         }
@@ -161,6 +163,9 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
             }
         } catch (NullPointerException e) {
         }
+        if (task.getIndex() == 0) {
+            task.setIndex(++generator);
+        }
         allTask.put(task.getIndex(), task);
         treeTask.add(task);
     }
@@ -182,6 +187,9 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
             }
         } catch (NullPointerException e) {
         }
+        if (subtask.getIndex() == 0) {
+            subtask.setIndex(++generator);
+        }
         allSubtask.put(subtask.getIndex(), subtask);
         allEpic.get(subtask.getIndexEpic()).setActions(subtask);
         checkStatusEpic(allEpic.get(subtask.getIndexEpic()));
@@ -191,6 +199,9 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
 
     @Override
     public void creationEpic(Epic epic) {
+        if (epic.getIndex() == 0) {
+            epic.setIndex(++generator);
+        }
         allEpic.put(epic.getIndex(), epic);
     }
 
@@ -210,6 +221,9 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
                 }
             }
         } catch (NullPointerException e) {
+        }
+        if (task.getIndex() == 0) {
+            task.setIndex(++generator);
         }
         allTask.put(task.getIndex(), task);
         treeTask.add(task);
@@ -232,6 +246,9 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
             }
         } catch (NullPointerException e) {
         }
+        if (subtask.getIndex() == 0) {
+            subtask.setIndex(++generator);
+        }
         allSubtask.put(subtask.getIndex(), subtask);
         allEpic.get(subtask.getIndexEpic()).setActions(subtask);
         checkStatusEpic(allEpic.get(subtask.getIndexEpic()));
@@ -241,6 +258,9 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
 
     @Override
     public void updateEpic(Epic epic) {
+        if (epic.getIndex() == 0) {
+            epic.setIndex(++generator);
+        }
         allEpic.put(epic.getIndex(), epic);
     }
 
@@ -349,11 +369,6 @@ public class InMemoryTaskManager implements TaskManager, Comparator<Task> {
     @Override
     public List<Task> getHistory() {
         return historManager.getHistory();
-    }
-
-    @Override
-    public void save() {
-        System.out.println("Нет такого метода в InMemoryTaskManager");
     }
 
     @Override

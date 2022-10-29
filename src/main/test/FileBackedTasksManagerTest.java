@@ -1,13 +1,11 @@
 package main.test;
 
 import main.control.FileBackedTasksManager;
-import main.control.Managers;
+import main.control.manager.Managers;
 import main.target.Epic;
 import main.target.Subtask;
 import main.target.Task;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.util.List;
@@ -33,7 +31,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksManager> 
         );
         // эпик без подзадач
         taskManager = Managers.loadFromFile(new File("./fileTask3.csv"));
-        List<Subtask> tasks = taskManager.allSubtaskEpic("Зарядить телефон");
+        List<Subtask> tasks = taskManager.allSubtaskEpic(7);
         Epic epic = taskManager.getIndexEpic(7);
         Assertions.assertAll(
                 () -> Assertions.assertEquals(epic.getName(), "Зарядить телефон"),

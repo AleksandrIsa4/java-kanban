@@ -31,7 +31,7 @@ public interface TaskManager {
     Epic getIndexEpic(int index);
 
     //Получение всех подзадач по name эпика
-    ArrayList<Subtask> allSubtaskEpic(String name);
+    ArrayList<Subtask> allSubtaskEpic(int index);
 
     //Добавление задачи в список
     void creationTask(Task task);
@@ -67,7 +67,7 @@ public interface TaskManager {
     List<Task> getHistory();
 
     //сохранение в файл задач и истории
-    void save();
+    // void save();
 
     //извлечение задач и истории из файла
     void loadFile(String file);

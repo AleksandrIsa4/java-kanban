@@ -28,7 +28,9 @@ class EpicTest {
 
     @Test
     void emptyEpic() {
-        taskManager.creationEpic(new Epic("Приготовить чай", taskId));
+        Epic epic1=new Epic("Приготовить чай");
+        epic1.setIndex(taskId);
+        taskManager.creationEpic(epic1);
         final Epic savedEpic = taskManager.getIndexEpic(taskId);
         assertNotNull(savedEpic, "Задача не найдена.");
         actions = savedEpic.getActions();
@@ -37,10 +39,21 @@ class EpicTest {
 
     @Test
     void newEpic() {
-        taskManager.creationEpic(new Epic("Приготовить чай", taskId));
-        taskManager.creationSubtask(new Subtask("Вскипятить воду", "Поставить чайник", (taskId + 1), taskId, 55, "22.12.05 16:12"));
-        taskManager.creationSubtask(new Subtask("Выбрать чай", "Добавить заварку", (taskId + 2), taskId, 55, "22.12.05 18:12"));
-        taskManager.creationSubtask(new Subtask("Выбрать чай2", "Добавить заварку2", (taskId + 3), taskId, 55, "22.12.05 20:12"));
+        Epic epic1=new Epic("Приготовить чай");
+        epic1.setIndex(taskId);
+        taskManager.creationEpic(epic1);
+        Subtask subtask1=new Subtask("Вскипятить воду", "Поставить чайник", 3, 55, "22.12.05 16:12");
+        subtask1.setIndex(taskId + 1);
+        taskManager.creationSubtask(subtask1);
+        Subtask subtask2=new Subtask("Выбрать чай", "Добавить заварку", 3, 55, "22.09.22 00:55");
+        subtask2.setIndex(taskId + 2);
+        taskManager.creationSubtask(subtask2);
+        Subtask subtask3=new Subtask("Выбрать чай2", "Добавить заварку2", 3, 55, "22.12.05 16:52");
+        subtask3.setIndex(taskId + 3);
+        taskManager.creationEpic(epic1);
+        taskManager.creationSubtask(subtask1);
+        taskManager.creationSubtask(subtask2);
+        taskManager.creationSubtask(subtask3);
         final Epic savedEpic = taskManager.getIndexEpic(taskId);
         assertNotNull(savedEpic, "Задача не найдена.");
         Assertions.assertEquals(Status.NEW, savedEpic.getStatus(), "Неверный статус задачи.");
@@ -48,10 +61,21 @@ class EpicTest {
 
     @Test
     void doneEpic() {
-        taskManager.creationEpic(new Epic("Приготовить чай", taskId));
-        taskManager.creationSubtask(new Subtask("Вскипятить воду", "Поставить чайник", (taskId + 1), taskId, 55, "22.12.05 16:12"));
-        taskManager.creationSubtask(new Subtask("Выбрать чай", "Добавить заварку", (taskId + 2), taskId, 55, "22.12.05 17:12"));
-        taskManager.creationSubtask(new Subtask("Выбрать чай2", "Добавить заварку2", (taskId + 3), taskId, 55, "22.12.05 18:12"));
+        Epic epic1=new Epic("Приготовить чай");
+        epic1.setIndex(taskId);
+        taskManager.creationEpic(epic1);
+        Subtask subtask1=new Subtask("Вскипятить воду", "Поставить чайник", 3, 55, "22.12.05 16:12");
+        subtask1.setIndex(taskId + 1);
+        taskManager.creationSubtask(subtask1);
+        Subtask subtask2=new Subtask("Выбрать чай", "Добавить заварку", 3, 55, "22.12.05 17:12");
+        subtask2.setIndex(taskId + 2);
+        taskManager.creationSubtask(subtask2);
+        Subtask subtask3=new Subtask("Выбрать чай2", "Добавить заварку2", 3, 55, "22.12.05 18:12");
+        subtask3.setIndex(taskId + 3);
+        taskManager.creationEpic(epic1);
+        taskManager.creationSubtask(subtask1);
+        taskManager.creationSubtask(subtask2);
+        taskManager.creationSubtask(subtask3);
         taskManager.assignSubtask("Вскипятить воду", Status.DONE);
         taskManager.assignSubtask("Выбрать чай", Status.DONE);
         taskManager.assignSubtask("Выбрать чай2", Status.DONE);
@@ -62,10 +86,21 @@ class EpicTest {
 
     @Test
     void newDoneEpic() {
-        taskManager.creationEpic(new Epic("Приготовить чай", taskId));
-        taskManager.creationSubtask(new Subtask("Вскипятить воду", "Поставить чайник", (taskId + 1), taskId, 55, "22.12.05 16:12"));
-        taskManager.creationSubtask(new Subtask("Выбрать чай", "Добавить заварку", (taskId + 2), taskId, 55, "22.12.05 17:12"));
-        taskManager.creationSubtask(new Subtask("Выбрать чай2", "Добавить заварку2", (taskId + 3), taskId, 55, "22.12.05 18:12"));
+        Epic epic1=new Epic("Приготовить чай");
+        epic1.setIndex(taskId);
+        taskManager.creationEpic(epic1);
+        Subtask subtask1=new Subtask("Вскипятить воду", "Поставить чайник", 3, 55, "22.12.05 16:12");
+        subtask1.setIndex(taskId + 1);
+        taskManager.creationSubtask(subtask1);
+        Subtask subtask2=new Subtask("Выбрать чай", "Добавить заварку", 3, 55, "22.12.05 17:12");
+        subtask2.setIndex(taskId + 2);
+        taskManager.creationSubtask(subtask2);
+        Subtask subtask3=new Subtask("Выбрать чай2", "Добавить заварку2", 3, 55, "22.12.05 18:12");
+        subtask3.setIndex(taskId + 3);
+        taskManager.creationEpic(epic1);
+        taskManager.creationSubtask(subtask1);
+        taskManager.creationSubtask(subtask2);
+        taskManager.creationSubtask(subtask3);
         taskManager.assignSubtask("Вскипятить воду", Status.DONE);
         taskManager.assignSubtask("Выбрать чай", Status.DONE);
         final Epic savedEpic = taskManager.getIndexEpic(taskId);
@@ -75,10 +110,21 @@ class EpicTest {
 
     @Test
     void progressEpic() {
-        taskManager.creationEpic(new Epic("Приготовить чай", taskId));
-        taskManager.creationSubtask(new Subtask("Вскипятить воду", "Поставить чайник", (taskId + 1), taskId, 55, "22.12.05 16:12"));
-        taskManager.creationSubtask(new Subtask("Выбрать чай", "Добавить заварку", (taskId + 2), taskId, 55, "22.12.05 17:12"));
-        taskManager.creationSubtask(new Subtask("Выбрать чай2", "Добавить заварку2", (taskId + 3), taskId, 55, "22.12.05 18:12"));
+        Epic epic1=new Epic("Приготовить чай");
+        epic1.setIndex(taskId);
+        taskManager.creationEpic(epic1);
+        Subtask subtask1=new Subtask("Вскипятить воду", "Поставить чайник", 3, 55, "22.12.05 16:12");
+        subtask1.setIndex(taskId + 1);
+        taskManager.creationSubtask(subtask1);
+        Subtask subtask2=new Subtask("Выбрать чай", "Добавить заварку", 3, 55, "22.12.05 17:12");
+        subtask2.setIndex(taskId + 2);
+        taskManager.creationSubtask(subtask2);
+        Subtask subtask3=new Subtask("Выбрать чай2", "Добавить заварку2", 3, 55, "22.12.05 18:12");
+        subtask3.setIndex(taskId + 3);
+        taskManager.creationEpic(epic1);
+        taskManager.creationSubtask(subtask1);
+        taskManager.creationSubtask(subtask2);
+        taskManager.creationSubtask(subtask3);
         taskManager.assignSubtask("Вскипятить воду", Status.IN_PROGRESS);
         taskManager.assignSubtask("Выбрать чай", Status.IN_PROGRESS);
         taskManager.assignSubtask("Выбрать чай2", Status.IN_PROGRESS);

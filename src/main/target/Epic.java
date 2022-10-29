@@ -7,8 +7,8 @@ import java.util.Objects;
 public class Epic extends Task {
     private ArrayList<Subtask> actions = new ArrayList<>();
 
-    public Epic(String name, int index) {
-        super(name, " ", index, 0);
+    public Epic(String name) {
+        super(name, " ", 0);
     }
 
     public ArrayList<Subtask> getActions() {
@@ -22,7 +22,9 @@ public class Epic extends Task {
     @Override
     public String toString() {
         if (startTime != null) {
-            return index + "," + name + "," + status + "," + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm"));
+            return index + "," + name + "," + status + ", "+duration + "," + startTime.format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm"));
+        } else if (duration!=null) {
+            return index + "," + name + "," + status + ", " + duration;
         } else {
             return index + "," + name + "," + status;
         }
