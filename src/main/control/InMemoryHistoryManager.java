@@ -37,27 +37,6 @@ public final class InMemoryHistoryManager implements HistoryManager {
 
     private class CustomLinkedList<T> {
 
-        class Node<E> {
-            public E task;
-            public Node<E> next;
-            public Node<E> prev;
-
-            public Node(Node<E> prev, E task, Node<E> next) {
-                this.task = task;
-                this.next = next;
-                this.prev = prev;
-            }
-
-            @Override
-            public String toString() {
-                return "Node{" +
-                        "task=" + task +
-                        ", next=" + (next != null ? next.task : null) +
-                        ", prev=" + (prev != null ? prev.task : null) +
-                        '}';
-            }
-        }
-
         private Node<T> head;
         private Node<T> tail;
         private int size = 0;
@@ -126,6 +105,27 @@ public final class InMemoryHistoryManager implements HistoryManager {
                 ptr = ptr.next;
             }
             return historyList;
+        }
+
+        class Node<E> {
+            public E task;
+            public Node<E> next;
+            public Node<E> prev;
+
+            public Node(Node<E> prev, E task, Node<E> next) {
+                this.task = task;
+                this.next = next;
+                this.prev = prev;
+            }
+
+            @Override
+            public String toString() {
+                return "Node{" +
+                        "task=" + task +
+                        ", next=" + (next != null ? next.task : null) +
+                        ", prev=" + (prev != null ? prev.task : null) +
+                        '}';
+            }
         }
     }
 }

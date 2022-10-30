@@ -11,11 +11,13 @@ import java.util.*;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
 
-    GsonBuilder gsonBuilder = new GsonBuilder();
-    Gson gson = gsonBuilder.create();
-    KVTaskClient kvTaskClient = new KVTaskClient();
+    private GsonBuilder gsonBuilder = new GsonBuilder();
+    private Gson gson;
+    private KVTaskClient kvTaskClient;
+
     // создает клиент с указанным URL
     public HTTPTaskManager() {
+        gson = gsonBuilder.create();
         loadFile("http://localhost:8078/");
     }
 
@@ -60,7 +62,7 @@ public class HTTPTaskManager extends FileBackedTasksManager {
     @Override
     public void loadFile(String URL) {
         InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        kvTaskClient.setUrl(URL);
+        kvTaskClient = new KVTaskClient(URL);
         String taskJson = kvTaskClient.load("task");
         if (!(taskJson.equals(""))) {
             Task[] tasks = gson.fromJson(taskJson, Task[].class);

@@ -19,28 +19,24 @@ public class HttpTaskServer {
 
     private static final int PORT = 8080;
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    private static Gson gson = new Gson();
-    private static TaskManager httpTaskManager;
-    static HttpServer httpServer;
+    private Gson gson;
+    private TaskManager httpTaskManager;
+    private HttpServer httpServer;
 
     public HttpTaskServer(TaskManager httpTaskManager) throws IOException {
-        createHTTPServer();
-        this.httpTaskManager = httpTaskManager;
-    }
-
-    public static void createHTTPServer() throws IOException {
+        gson = new Gson();
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks", new TasksHandler());
         httpServer.start();
-        System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
+        this.httpTaskManager = httpTaskManager;
     }
 
     public void stopHTTPServer() throws IOException {
         this.httpServer.stop(0);
     }
 
-    static class TasksHandler extends InMemoryTaskManager implements HttpHandler {
+    class TasksHandler extends InMemoryTaskManager implements HttpHandler {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             String method = httpExchange.getRequestMethod();
@@ -57,137 +53,160 @@ public class HttpTaskServer {
             String index = httpExchange.getRequestURI().getQuery();
             switch (method) {
                 case "POST":
-                    InputStreamReader streamReader = new InputStreamReader(httpExchange.getRequestBody(), DEFAULT_CHARSET);
-                    BufferedReader bufferedReader = new BufferedReader(streamReader);
-                    StringBuilder body = new StringBuilder();
-                    while (bufferedReader.ready()) {
-                        body.append(bufferedReader.readLine());
-                    }
-                    bufferedReader.close();
-                    streamReader.close();
-                    String bodyString = body.toString();
-                    switch (taskType) {
-                        case "task":
-                            Task task = gson.fromJson(bodyString, Task.class);
-                            httpTaskManager.creationTask(task);
-                            break;
-                        case "subtask":
-                            Subtask subtask = gson.fromJson(bodyString, Subtask.class);
-                            httpTaskManager.creationSubtask(subtask);
-                            break;
-                        case "epic":
-                            Epic epic = gson.fromJson(bodyString, Epic.class);
-                            httpTaskManager.creationEpic(epic);
-                            break;
-                        default:
-                            System.out.println(123);
-                            break;
-                    }
-                    httpExchange.sendResponseHeaders(200, 0);
-                    httpExchange.close();
+                    postRequest(taskType, httpExchange);
                     break;
                 case "GET":
-                    switch (taskType) {
-                        case "task":
-                            if (index == null) {
-                                try (OutputStream os = httpExchange.getResponseBody()) {
-                                    httpExchange.sendResponseHeaders(200, 0);
-                                    os.write(gson.toJson(httpTaskManager.getAllTask()).getBytes());
-                                }
-                            } else {
-                                String[] splitIndex = index.split("=");
-                                int id = Integer.parseInt(splitIndex[1]);
-                                try (OutputStream os = httpExchange.getResponseBody()) {
-                                    httpExchange.sendResponseHeaders(200, 0);
-                                    os.write(gson.toJson(httpTaskManager.getIndexTask(id)).getBytes());
-                                }
-                            }
-                            break;
-                        case "subtask":
-                            if (index == null) {
-                                try (OutputStream os = httpExchange.getResponseBody()) {
-                                    httpExchange.sendResponseHeaders(200, 0);
-                                    os.write(gson.toJson(httpTaskManager.getAllSubtask()).getBytes());
-                                }
-                            } else if (splitStrings[splitStrings.length - 1].equals("epic") && splitStrings.length == 4) {
-                                String[] splitIndex = index.split("=");
-                                int id = Integer.parseInt(splitIndex[1]);
-                                try (OutputStream os = httpExchange.getResponseBody()) {
-                                    httpExchange.sendResponseHeaders(200, 0);
-                                    os.write(gson.toJson(httpTaskManager.allSubtaskEpic(id)).getBytes());
-                                }
-                            } else {
-                                String[] splitIndex = index.split("=");
-                                int id = Integer.parseInt(splitIndex[1]);
-                                try (OutputStream os = httpExchange.getResponseBody()) {
-                                    httpExchange.sendResponseHeaders(200, 0);
-                                    os.write(gson.toJson(httpTaskManager.getIndexSubtask(id)).getBytes());
-                                }
-                            }
-                            break;
-                        case "epic":
-                            if (index == null) {
-                                try (OutputStream os = httpExchange.getResponseBody()) {
-                                    httpExchange.sendResponseHeaders(200, 0);
-                                    os.write(gson.toJson(httpTaskManager.getAllEpic()).getBytes());
-                                }
-                            } else {
-                                String[] splitIndex = index.split("=");
-                                int id = Integer.parseInt(splitIndex[1]);
-                                try (OutputStream os = httpExchange.getResponseBody()) {
-                                    httpExchange.sendResponseHeaders(200, 0);
-                                    os.write(gson.toJson(httpTaskManager.getIndexEpic(id)).getBytes());
-                                }
-                            }
-                            break;
-                        case "history":
-                            try (OutputStream os = httpExchange.getResponseBody()) {
-                                httpExchange.sendResponseHeaders(200, 0);
-                                os.write(gson.toJson(httpTaskManager.getHistory()).getBytes());
-                            }
-                            break;
-                        default:
-                            break;
+                    if (index == null) {
+                        getRequest(taskType, httpExchange);
+                    } else if (splitStrings[splitStrings.length - 1].equals("epic") && splitStrings.length == 4) {
+                        getRequestEpicSubtask(taskType, httpExchange, index);
+                    } else {
+                        getRequestIndex(taskType, httpExchange, index);
                     }
                     break;
                 case "DELETE":
-                    switch (taskType) {
-                        case "task":
-                            if (index == null) {
-                                httpTaskManager.deleteAllTask();
-                            } else {
-                                String[] splitIndex = index.split("=");
-                                int id = Integer.parseInt(splitIndex[1]);
-                                httpTaskManager.deleteTask(id);
-                            }
-                            break;
-                        case "subtask":
-                            if (index == null) {
-                                httpTaskManager.deleteAllSubtask();
-                            } else {
-                                String[] splitIndex = index.split("=");
-                                int id = Integer.parseInt(splitIndex[1]);
-                                httpTaskManager.deleteSubtask(id);
-                            }
-                            break;
-                        case "epic":
-                            if (index == null) {
-                                httpTaskManager.deleteAllEpic();
-                            } else {
-                                String[] splitIndex = index.split("=");
-                                int id = Integer.parseInt(splitIndex[1]);
-                                httpTaskManager.deleteEpic(id);
-                            }
-                            break;
-                        default:
-                            break;
+                    if (index == null) {
+                        deleteRequest(taskType, httpExchange);
+                    } else {
+                        deleteRequestIndex(taskType, httpExchange, index);
                     }
-                    httpExchange.sendResponseHeaders(201, 0);
-                    httpExchange.close();
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private void postRequest(String taskType, HttpExchange httpExchange) throws IOException {
+        InputStreamReader streamReader = new InputStreamReader(httpExchange.getRequestBody(), DEFAULT_CHARSET);
+        BufferedReader bufferedReader = new BufferedReader(streamReader);
+        StringBuilder body = new StringBuilder();
+        while (bufferedReader.ready()) {
+            body.append(bufferedReader.readLine());
+        }
+        bufferedReader.close();
+        streamReader.close();
+        String bodyString = body.toString();
+        switch (taskType) {
+            case "task":
+                Task task = gson.fromJson(bodyString, Task.class);
+                httpTaskManager.creationTask(task);
+                break;
+            case "subtask":
+                Subtask subtask = gson.fromJson(bodyString, Subtask.class);
+                httpTaskManager.creationSubtask(subtask);
+                break;
+            case "epic":
+                Epic epic = gson.fromJson(bodyString, Epic.class);
+                httpTaskManager.creationEpic(epic);
+                break;
+            default:
+                break;
+        }
+        httpExchange.sendResponseHeaders(200, 0);
+        httpExchange.close();
+    }
+
+    private void getRequest(String taskType, HttpExchange httpExchange) throws IOException {
+        switch (taskType) {
+            case "task":
+                try (OutputStream os = httpExchange.getResponseBody()) {
+                    httpExchange.sendResponseHeaders(200, 0);
+                    os.write(gson.toJson(httpTaskManager.getAllTask()).getBytes());
+                }
+                break;
+            case "subtask":
+                try (OutputStream os = httpExchange.getResponseBody()) {
+                    httpExchange.sendResponseHeaders(200, 0);
+                    os.write(gson.toJson(httpTaskManager.getAllSubtask()).getBytes());
+                }
+            case "epic":
+                try (OutputStream os = httpExchange.getResponseBody()) {
+                    httpExchange.sendResponseHeaders(200, 0);
+                    os.write(gson.toJson(httpTaskManager.getAllEpic()).getBytes());
+                }
+            case "history":
+                try (OutputStream os = httpExchange.getResponseBody()) {
+                    httpExchange.sendResponseHeaders(200, 0);
+                    os.write(gson.toJson(httpTaskManager.getHistory()).getBytes());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void getRequestIndex(String taskType, HttpExchange httpExchange, String index) throws IOException {
+        String[] splitIndex = index.split("=");
+        int id = Integer.parseInt(splitIndex[1]);
+        switch (taskType) {
+            case "task":
+                try (OutputStream os = httpExchange.getResponseBody()) {
+                    httpExchange.sendResponseHeaders(200, 0);
+                    os.write(gson.toJson(httpTaskManager.getIndexTask(id)).getBytes());
+                }
+                break;
+            case "subtask":
+                try (OutputStream os = httpExchange.getResponseBody()) {
+                    httpExchange.sendResponseHeaders(200, 0);
+                    os.write(gson.toJson(httpTaskManager.getIndexSubtask(id)).getBytes());
+                }
+                break;
+            case "epic":
+                try (OutputStream os = httpExchange.getResponseBody()) {
+                    httpExchange.sendResponseHeaders(200, 0);
+                    os.write(gson.toJson(httpTaskManager.getIndexEpic(id)).getBytes());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void getRequestEpicSubtask(String taskType, HttpExchange httpExchange, String index) throws IOException {
+        String[] splitIndex = index.split("=");
+        int id = Integer.parseInt(splitIndex[1]);
+        try (OutputStream os = httpExchange.getResponseBody()) {
+            httpExchange.sendResponseHeaders(200, 0);
+            os.write(gson.toJson(httpTaskManager.allSubtaskEpic(id)).getBytes());
+        }
+    }
+
+    private void deleteRequest(String taskType, HttpExchange httpExchange) throws IOException {
+        switch (taskType) {
+            case "task":
+                httpTaskManager.deleteAllTask();
+                break;
+            case "subtask":
+                httpTaskManager.deleteAllSubtask();
+                break;
+            case "epic":
+                httpTaskManager.deleteAllEpic();
+                break;
+            default:
+                break;
+        }
+        httpExchange.sendResponseHeaders(201, 0);
+        httpExchange.close();
+    }
+
+    private void deleteRequestIndex(String taskType, HttpExchange httpExchange, String index) throws IOException {
+        String[] splitIndex = index.split("=");
+        int id = Integer.parseInt(splitIndex[1]);
+        switch (taskType) {
+            case "task":
+                httpTaskManager.deleteTask(id);
+                break;
+            case "subtask":
+                httpTaskManager.deleteSubtask(id);
+                break;
+            case "epic":
+                httpTaskManager.deleteEpic(id);
+                break;
+            default:
+                break;
+        }
+        httpExchange.sendResponseHeaders(201, 0);
+        httpExchange.close();
     }
 }

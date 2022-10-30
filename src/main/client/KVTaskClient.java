@@ -13,12 +13,7 @@ public class KVTaskClient {
     private String url;
     private String apiToken;
 
-    public KVTaskClient() {
-        url = null;
-        apiToken = null;
-    }
-
-    public void setUrl(String url) {
+    public KVTaskClient(String url) {
         this.url = url;
         apiToken = register(url);
     }
@@ -33,7 +28,7 @@ public class KVTaskClient {
             HttpResponse<String> send = httpClient.send(build, HttpResponse.BodyHandlers.ofString());
             return send.body();
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
@@ -46,7 +41,7 @@ public class KVTaskClient {
                     .build();
             httpClient.send(build, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
@@ -59,10 +54,15 @@ public class KVTaskClient {
                     .build();
             HttpResponse<String> response = httpClient.send(build, HttpResponse.BodyHandlers.ofString());
             JsonElement jsonElement = JsonParser.parseString(response.body());
-            JsonArray jsonArray = jsonElement.getAsJsonArray();
-            return jsonArray.toString();
+            // Проверка наличия на сервере задач, в случае отсутствия задач возвращает пустую строку
+            if (!(jsonElement.isJsonNull())) {
+                JsonArray jsonArray = jsonElement.getAsJsonArray();
+                return jsonArray.toString();
+            } else {
+                return "";
+            }
         } catch (Exception e) {
-            return "";
+            throw new RuntimeException(e);
         }
     }
 }

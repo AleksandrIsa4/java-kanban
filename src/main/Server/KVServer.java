@@ -50,7 +50,11 @@ public class KVServer {
                     return;
                 }
                 if (key.equals("task") || key.equals("subtask") || key.equals("epic") || key.equals("history")) {
-                    sendText(h, data.get(key));
+                    if (data.get(key)!=null) {
+                        sendText(h, data.get(key));
+                    } else {
+                        h.sendResponseHeaders(200, 0);
+                    }
                 } else {
                     System.out.println("Неверный Key. Key может быть task, subtask, pic, history");
                 }

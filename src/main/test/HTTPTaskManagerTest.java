@@ -27,7 +27,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         kvServer = new KVServer();
         kvServer.start();
         taskManager = new HTTPTaskManager();
-        taskManager.loadFile("http://localhost:8078/");
+        //   taskManager.loadFile("http://localhost:8078/");
         httpTaskServer = new HttpTaskServer(taskManager);
         initTask();
         initEpic();
@@ -217,8 +217,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         URI url = URI.create("http://localhost:8080/tasks/task/");
         String json = gson.toJson(taskTest);
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        //final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).header("Content-Type", "application/json").build();
         client.send(request, HttpResponse.BodyHandlers.ofString());
         Task task = taskManager.getIndexTask(44);
         Task task1 = new Task("Поездка44", "Упаковать кошку44", 55, "22.10.95 10:45");
@@ -237,7 +236,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         URI url = URI.create("http://localhost:8080/tasks/subtask/");
         String json = gson.toJson(taskTest);
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).header("Content-Type", "application/json").build();
         client.send(request, HttpResponse.BodyHandlers.ofString());
         Subtask subtask = taskManager.getIndexSubtask(44);
         Subtask subtask1 = new Subtask("Вскипятить воду44", "Поставить чайник44", 3, 55, "22.12.44 16:12");
@@ -256,7 +255,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         URI url = URI.create("http://localhost:8080/tasks/epic/");
         String json = gson.toJson(taskTest);
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).version(HttpClient.Version.HTTP_1_1).POST(body).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).version(HttpClient.Version.HTTP_1_1).POST(body).header("Content-Type", "application/json").build();
         client.send(request, HttpResponse.BodyHandlers.ofString());
         Epic epic = taskManager.getIndexEpic(44);
         Epic epic2 = new Epic("Зарядить телефон");
@@ -275,7 +274,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         URI url = URI.create("http://localhost:8080/tasks/task/");
         String json = gson.toJson(taskTest);
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).header("Content-Type", "application/json").build();
         client.send(request, HttpResponse.BodyHandlers.ofString());
         Task task = taskManager.getIndexTask(44);
         Task task1 = new Task("Поездка44", "Упаковать кошку44", 55, "22.10.95 10:45");
@@ -294,7 +293,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         URI url = URI.create("http://localhost:8080/tasks/subtask/");
         String json = gson.toJson(taskTest);
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).header("Content-Type", "application/json").build();
         client.send(request, HttpResponse.BodyHandlers.ofString());
         Subtask subtask = taskManager.getIndexSubtask(44);
         Subtask subtask1 = new Subtask("Вскипятить воду44", "Поставить чайник44", 3, 55, "22.12.44 16:12");
@@ -313,7 +312,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         URI url = URI.create("http://localhost:8080/tasks/epic/");
         String json = gson.toJson(taskTest);
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
-        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).header("Content-Type", "application/json").build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Epic epic = taskManager.getIndexEpic(44);
         Epic epic2 = new Epic("Зарядить телефон");
