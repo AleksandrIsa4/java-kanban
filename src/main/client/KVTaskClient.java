@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -27,7 +28,7 @@ public class KVTaskClient {
                     .build();
             HttpResponse<String> send = httpClient.send(build, HttpResponse.BodyHandlers.ofString());
             return send.body();
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException  e) {
             throw new RuntimeException(e);
         }
     }
@@ -40,9 +41,9 @@ public class KVTaskClient {
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
             httpClient.send(build, HttpResponse.BodyHandlers.ofString());
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
-        }
+                 }
     }
 
     public String load(String key) {
@@ -61,7 +62,7 @@ public class KVTaskClient {
             } else {
                 return "";
             }
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException  e) {
             throw new RuntimeException(e);
         }
     }
